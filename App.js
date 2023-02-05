@@ -13,9 +13,9 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <>
-      <StatusBar style="auto" />
+    <View style={styles.container}>
       <NavigationContainer>
+      <StatusBar style="auto" />
         <Tab.Navigator
          screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
@@ -41,6 +41,13 @@ export default function App() {
         <Tab.Screen name="MyPage" component={MyPageScreen} options={{ headerShown: false }}/>
       </Tab.Navigator>
       </NavigationContainer>
-      </>
+      </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+});
