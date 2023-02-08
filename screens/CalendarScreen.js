@@ -1,13 +1,16 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, Button } from "react-native";
+import { StyleSheet, View, Text, Button, TouchableOpacity } from "react-native";
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 function CalendarScreen() {
+  const monthName = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const week = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  const [check, setCheck] = useState(false);
+  const [checkNum, setCheckNum] = useState();
   var newDate = new Date();
   const [year, setYear] = useState(newDate.getFullYear());
   const [month, setMonth] = useState(newDate.getMonth() + 1);
-  const [date, setDate] = useState(newDate.getDate());
-  const [day, setDay] = useState(newDate.getDay());
 
   // 이전 달 마지막 날짜, 이번 달 마지막 날짜
   const prevLast = new Date(year, month-1, 0);
@@ -35,7 +38,7 @@ function CalendarScreen() {
     nextDates.push(i)
   }
 
-  // Dates 합치기
+  // 이전 달 ,현재 달, 다음 달 합치기
   const dates = prevDates.concat(nowDates, nextDates);
 
 
@@ -56,21 +59,27 @@ function CalendarScreen() {
     <View style={styles.container}>
       <View style={styles.statusbar}></View>
       <View style={styles.month}>
-        <Button title="<" onPress={() => {setMonth(prevButton(month))}}/>
-        <Text>{month}월</Text>
-        <Button title=">" onPress={() => {setMonth(nextButton(month))}}/>
+        <Ionicons name="chevron-back-outline" size={25}  color="skyblue" onPress={() => { setMonth(prevButton(month)) }}></Ionicons>
+        <Text style={styles.monthName}>{monthName[month-1]} {year}</Text>
+        <Ionicons name="chevron-forward-outline" size={25}  color="skyblue" onPress={() => { setMonth(nextButton(month)) }}></Ionicons>
       </View>
       <View style={styles.calendar}>
         <View style={styles.weekname}>
           {week.map((i) => (
-          <Text style={ifStyles(i).weektext} key={i}>{i}</Text>
+          <Text style={weekIfStyles(i).weektext} key={i}>{i}</Text>
           ))}
         </View>
         <View style={styles.date}>
           {dates.map((date, i) => (
-              <View style={styles.datebox} key={i}>
-                <Text style={ifStyles().datetext}>{date}</Text>
-              </View>
+            <TouchableOpacity style={styles.datebox} key={i}
+              onPress={() => {
+                setCheck(!check)
+                setCheckNum(i);
+              }}
+            >
+                <Text style={dateIfStyles(dates, prevDay, nowDay, i, check, checkNum).datetext}
+              >{date}</Text>
+            </TouchableOpacity>
           ))}
         </View>
       </View>
@@ -83,21 +92,26 @@ function CalendarScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'skyblue',
+    backgroundColor: 'white',
   },
   statusbar: {
     flex: 0.3,
-    backgroundColor: "orange",
+    backgroundColor: "white",
   },
   month: {
     flex: 0.7,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    marginLeft: 15,
+    marginRight: 15,
+  },
+  monthName: {
+    fontSize: 20,
   },
   calendar: {
     flex: 9,
-    backgroundColor: "grey",
+    backgroundColor: "white",
   },
   weekname: {
     flexDirection: "row",
@@ -110,16 +124,23 @@ const styles = StyleSheet.create({
     width: "14.25%"
   }
 });
-const ifStyles = (i) => StyleSheet.create({
+const weekIfStyles = (i) => StyleSheet.create({
   weektext: {
     flex: 1,
     textAlign: "center",
-    color: (i === "Sun") ? "red" : (i === "Sat") ? "skyblue" : "white",
+    color: (i === "Sun") ? "red" : (i === "Sat") ? "skyblue" : "grey",
   },
+});
+const dateIfStyles = (dates, prevDay, nowDay, i, check, checkNum) => StyleSheet.create({
   datetext: {
     textAlign: "center",
-    color: "white",
+    color: (prevDay != 6 && prevDay >= i) || (dates.length - (7 - nowDay) < i) ? "grey" : "black",
     fontSize: 25,
-  }
+    margin: 10,
+    borderRadius: 50,
+    borderColor: "blue",
+    borderWidth: checkNum === i && check ? 1 : 0,
+  },
 });
+
 export default CalendarScreen;
