@@ -43,12 +43,14 @@ function CalendarScreen() {
 
 
   function prevButton(month) {
+    setCheckNum();
     if (month === 1) {
       return 12;
     }
     return month - 1;
   };
   function nextButton(month) {
+    setCheckNum();
     if (month === 12) {
       return 1;
     }
@@ -73,8 +75,13 @@ function CalendarScreen() {
           {dates.map((date, i) => (
             <TouchableOpacity style={styles.datebox} key={i}
               onPress={() => {
-                setCheck(!check)
-                setCheckNum(i);
+                if (check === false) {
+                  setCheck(!check);
+                } else if (checkNum === i) {
+                  setCheckNum();
+                } else {
+                  setCheckNum(i);
+                }
               }}
             >
                 <Text style={dateIfStyles(dates, prevDay, nowDay, i, check, checkNum).datetext}
@@ -139,7 +146,7 @@ const dateIfStyles = (dates, prevDay, nowDay, i, check, checkNum) => StyleSheet.
     margin: 10,
     borderRadius: 50,
     borderColor: "blue",
-    borderWidth: checkNum === i && check ? 1 : 0,
+    borderWidth: checkNum === i && check === true ? 1 : 0,
   },
 });
 
