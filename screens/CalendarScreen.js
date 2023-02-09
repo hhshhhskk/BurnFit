@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, Button, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons'
+
 
 function CalendarScreen() {
   const monthName = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const week = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
+  
   const [check, setCheck] = useState(false);
   const [checkNum, setCheckNum] = useState();
   var newDate = new Date();
@@ -42,28 +43,28 @@ function CalendarScreen() {
   const dates = prevDates.concat(nowDates, nextDates);
 
 
-  function prevButton(month) {
+  function prevButton(month, year) {
     setCheckNum();
     if (month === 1) {
-      return 12;
+       return setMonth(12), setYear(year-1);
     }
-    return month - 1;
+    return setMonth(month - 1);
   };
   function nextButton(month) {
     setCheckNum();
     if (month === 12) {
-      return 1;
+      return setMonth(1), setYear(year+1);
     }
-    return month + 1;
+    return setMonth(month + 1);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.statusbar}></View>
       <View style={styles.month}>
-        <Ionicons name="chevron-back-outline" size={25}  color="skyblue" onPress={() => { setMonth(prevButton(month)) }}></Ionicons>
+        <Ionicons name="chevron-back-outline" size={25}  color="skyblue" onPress={() => { prevButton(month, year) }}></Ionicons>
         <Text style={styles.monthName}>{monthName[month-1]} {year}</Text>
-        <Ionicons name="chevron-forward-outline" size={25}  color="skyblue" onPress={() => { setMonth(nextButton(month)) }}></Ionicons>
+        <Ionicons name="chevron-forward-outline" size={25}  color="skyblue" onPress={() => { nextButton(month, year) }}></Ionicons>
       </View>
       <View style={styles.calendar}>
         <View style={styles.weekname}>
@@ -82,10 +83,8 @@ function CalendarScreen() {
                 } else {
                   setCheckNum(i);
                 }
-              }}
-            >
-                <Text style={dateIfStyles(dates, prevDay, nowDay, i, check, checkNum).datetext}
-              >{date}</Text>
+              }}>
+              <Text style={dateIfStyles(dates, prevDay, nowDay, i, check, checkNum).datetext}>{date}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -93,8 +92,6 @@ function CalendarScreen() {
     </View>
   );
 }
-
-
 
 const styles = StyleSheet.create({
   container: {
